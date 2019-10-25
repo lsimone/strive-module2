@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <!--
     WELCOME TO THE STRIVE TEAM GENERATOR!
 
@@ -13,20 +13,169 @@
 <html lang="en">
   <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-    
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
   </head>
   <body>
-   
+    <div class="container">
+      <input
+        type="text"
+        id="input"
+        class="form-control"
+        placeholder="member or team name"
+      />
+      <div class="commands">
+        <button onclick="addMember()" class="btn btn-primary">
+          add member
+        </button>
+        <button onclick="addTeam()" class="btn btn-primary">add team</button>
+        <button onclick="assign()" class="btn btn-primary">assign</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row d-block">
+        <h5>members</h5>
+        <ol id="members"></ol>
+      </div>
+      <div class="row d-block">
+        <h5>Teams</h5>
+        <div class="row" id="teams"></div>
+      </div>
+    </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      var input, membersContainer, teamsContainer
+
+      function _addMember(name) {
+        if (name) {
+          var li = document.createElement('li')
+          li.textContent = name
+          membersContainer.append(li)
+          input.value = ''
+        }
+      }
+
+      function addMember() {
+        _addMember(input.value)
+      }
+
+      function _addTeam(name) {
+        if (name) {
+          var teamContainer = document.createElement('div')
+          teamContainer.className = 'col'
+          var teamNameHeader = document.createElement('h1')
+          teamNameHeader.textContent = name
+          var teamMembersContainer = document.createElement('ol')
+          teamContainer.append(teamNameHeader, teamMembersContainer)
+          teamsContainer.append(teamContainer)
+          input.value = ''
+        }
+      }
+
+      function addTeam() {
+        _addTeam(input.value)
+      }
+
+      // take the team with the smallest number of component OR the first one.
+      // returns the chosen team's ordered list
+      function getEligibleTeam() {
+        var firstTeamDiv = teamsContainer.children[0]
+        var firstTeamMembers = firstTeamDiv.getElementsByTagName('ol')[0]
+        var smallestMembersNum = firstTeamMembers.children.length
+
+        for (var teamDiv of teamsContainer.children) {
+          var ol = teamDiv.getElementsByTagName('ol')[0]
+          if (ol.children.length < smallestMembersNum) {
+            return ol
+          }
+        }
+        return firstTeamMembers
+      }
+
+      // return a random number from 0 to max-1
+      function getRandomIndex(max) {
+        return Math.floor(Math.random() * max)
+      }
+
+      // take a random member from the list
+      function pickRandomMember() {
+        var random = getRandomIndex(membersContainer.children.length)
+        return membersContainer.children[random]
+      }
+
+      // assign a member to a given team
+      function assignToTeam(member) {
+        var team = getEligibleTeam()
+        team.append(member)
+      }
+
+      function assign() {
+        var randomMember = pickRandomMember()
+        assignToTeam(randomMember)
+
+        // if all members have been assigned (members list empty)
+        // i'll disable the assign button!
+        if (!membersContainer.children.length) {
+          var buttonContainer = document.getElementsByClassName('commands')[0]
+          buttonContainer.lastElementChild.disabled = true
+        }
+      }
+
+      window.onload = function() {
+        input = document.getElementById('input')
+        membersContainer = document.getElementById('members')
+        teamsContainer = document.getElementById('teams')
+
+        var members = [
+          'fayju',
+          'michael',
+          'zabedul',
+          'neha',
+          'commander galactic mcawesomeville Tash',
+          'rasmus',
+          'hen',
+          'julio',
+          'vadym',
+          'ivan',
+          'aby',
+          'faina',
+          'jakub',
+          'jeff'
+        ]
+        var teams = ['apple', 'google', 'amazon', 'microsoft']
+        members.forEach(_addMember)
+        teams.forEach(_addTeam)
+      }
+    </script>
   </body>
 </html>
