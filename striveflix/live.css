@@ -1,0 +1,11 @@
+.profile-wrapper {
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.profile-container {
+    height: 200px;
+}
