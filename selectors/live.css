@@ -1,0 +1,93 @@
+body {
+    /* background: red; */
+    color: white;
+}
+
+.container {
+    width: 80%;
+    max-width: 500px;
+    min-height: 800px;
+    margin-right: auto;
+    margin-left: auto;
+    background-image: url('https://s3.envato.com/files/254557368/signapply-5.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+a {
+    color: white;
+}
+
+.todo li {
+    list-style: none;
+    margin-left: -40px;
+    /* margin: 0 0 0 -40px; */
+}
+
+.todo li a {
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.todo li a:first-child {
+    margin-left: 30px;
+}
+
+/* .todo li a:last-child {
+    color: red;
+} */
+
+/* 
+    nth-child(2n+1) will target all the elements
+    that are child Xth where X = 2n+1
+    n = 0 => 2n+1 = 1
+    n = 1 => 2n+1 = 3
+    n = 2 => 2n+1 = 5
+    n = ... 
+*/
+.todo li:nth-child(2n+1) {
+    background: gray;
+}
+
+/* 
+    nth-child(2n) will target all the elements
+    that are child Xth where X = 2n
+    n = 1 => 2n = 2
+    n = 2 => 2n = 4
+    n = 3 => 2n = 6
+    n = ... 
+    it will style 2nd, 4th, 6th....
+*/
+.todo li:nth-child(2n) {
+    background: rgb(70, 69, 69);
+}
+
+li:first-child {
+    background: red !important;
+}
+
+/* > , +, ~ */
+
+/* 
+    > just target the direct children!
+    in this case it will not style anything
+*/
+.todo > li {
+    text-decoration: underline;
+}
+
+.todo > h3 {
+    color: green;
+}
+
+/* 
+
+ */
+li:first-child + li {
+    color: yellow;
+}
+
+/*  */
+li:first-child ~ li {
+    font-weight: 800;
+}
