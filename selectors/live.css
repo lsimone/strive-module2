@@ -81,13 +81,17 @@ li:first-child {
 }
 
 /* 
-
+    > just target the nodes that immediately follow
+    the former specified element
  */
 li:first-child + li {
     color: yellow;
 }
 
-/*  */
-li:first-child ~ li {
+/* 
+    > just target the nodes that follow (not necessarily immediately)
+    the former specified element
+ */
+ li:first-child ~ li {
     font-weight: 800;
 }
