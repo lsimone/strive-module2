@@ -26,6 +26,160 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
+
+    <style>
+      #colorWheel {
+        height: 320px;
+        width: 320px;
+        position: relative;
+        cursor: pointer;
+        /* transition: all 0.5s linear; */
+        /* margin: 0 auto; */
+        /* user-select: none; */
+        /* animation:spin 1s linear infinite; */
+      }
+
+      .rotate {
+        animation: spin 1s linear infinite;
+      }
+
+      #colorWheel span {
+        position: absolute;
+        border: solid transparent;
+        border-width: 150px 50px;
+        left: 110px;
+        top: 10px;
+      }
+
+      #colorWheel span.color01 {
+        transform: rotate(0deg);
+        border-top-color: #43a1cd;
+      }
+
+      #colorWheel span.color02 {
+        transform: rotate(36deg);
+        border-top-color: #639b47;
+      }
+
+      #colorWheel span.color03 {
+        transform: rotate(72deg);
+        border-top-color: #9ac147;
+      }
+
+      #colorWheel span.color04 {
+        transform: rotate(108deg);
+        border-top-color: #e1e23b;
+      }
+
+      #colorWheel span.color05 {
+        transform: rotate(144deg);
+        border-top-color: #f7941e;
+      }
+
+      #colorWheel span.color06 {
+        transform: rotate(180deg);
+        border-top-color: #ba3e2e;
+      }
+
+      #colorWheel span.color07 {
+        transform: rotate(216deg);
+        border-top-color: #9a1d34;
+      }
+
+      #colorWheel span.color08 {
+        transform: rotate(252deg);
+        border-top-color: #662a6c;
+      }
+
+      #colorWheel span.color09 {
+        transform: rotate(288deg);
+        border-top-color: #272b66;
+      }
+
+      #colorWheel span.color10 {
+        transform: rotate(324deg);
+        border-top-color: #2d559f;
+      }
+
+      #colorWheel:before {
+        content: '';
+        width: 320px;
+        height: 320px;
+        overflow: hidden;
+        position: absolute;
+        border-radius: 100%;
+        border: 30px solid #ffffff;
+        z-index: 100;
+      }
+
+      #colorWheel:after {
+        content: '';
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        position: absolute;
+        top: 135px;
+        left: 135px;
+        border-radius: 100%;
+        background: #ffffff;
+      }
+
+      @keyframes spin {
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+
+      .lottery-wrapper {
+        position: relative;
+      }
+
+      .lottery {
+        display: inline-block;
+        height: 70px;
+        overflow: hidden;
+        background: yellow;
+      }
+
+      .triangle {
+        position: absolute;
+        left: -35px;
+        top: 25px;
+        display: inline-block;
+        border-style: solid;
+        border-width: 20px 50px;
+        border-color: transparent;
+        border-left-color: red;
+      }
+
+      #members li, #teams li {
+        transition: opacity 3s, background-color 3s;
+      }
+
+      .member-hidden {
+        opacity: 0;
+        background-color: rgb(143, 141, 141);
+      }
+
+      .pulse {
+        animation-name: pulse;
+        animation-duration: 1s;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          background-color: yellow;
+        }
+        to {
+          background-color: red;
+        }
+      }
+
+    </style>
   </head>
   <body>
     <div class="container">
@@ -49,10 +203,30 @@
         <h5>members</h5>
         <ol id="members"></ol>
       </div>
+      <div class="lottery-wrapper row d-block">
+        <h5>lottery</h5>
+        <div class="lottery">
+          <ol id="lottery"></ol>
+        </div>
+        <div class="triangle"></div>
+      </div>
       <div class="row d-block">
         <h5>Teams</h5>
         <div class="row" id="teams"></div>
       </div>
+    </div>
+
+    <div id="colorWheel" onclick="toggleRotation(event)">
+      <span class="color01"></span>
+      <span class="color02"></span>
+      <span class="color03"></span>
+      <span class="color04"></span>
+      <span class="color05"></span>
+      <span class="color06"></span>
+      <span class="color07"></span>
+      <span class="color08"></span>
+      <span class="color09"></span>
+      <span class="color10"></span>
     </div>
 
     <!-- Optional JavaScript -->
@@ -74,7 +248,11 @@
     ></script>
 
     <script>
-      var input, membersContainer, teamsContainer
+      var input, membersContainer, teamsContainer, lotteryContainer
+
+      function toggleRotation(event) {
+        event.currentTarget.classList.toggle('rotate')
+      }
 
       function _addMember(name) {
         if (name) {
@@ -82,6 +260,8 @@
           li.textContent = name
           membersContainer.append(li)
           input.value = ''
+          var cloned = li.cloneNode(true)
+          lotteryContainer.append(cloned)
         }
       }
 
@@ -137,26 +317,103 @@
 
       // assign a member to a given team
       function assignToTeam(member) {
-        var team = getEligibleTeam()
-        team.append(member)
+        member.classList.add('member-hidden')
+
+        // I must wait for the opacity animation to be completed (3s),
+        // then I move the member from the members ordered list to 
+        // the team O.L.
+        setTimeout(function () {
+          var team = getEligibleTeam()
+          team.append(member)
+
+          // the following setTimeout without delay will just execute the class
+          // removal when the browser has already put the DOM element
+          // in the correct place: 
+          // normally DOM manipulation is effectively
+          // done by the browser after the thread is complete (and not when your line
+          // of code is executed).
+          // So this workaround will do the manipulation in 2 steps:
+          // 1) move the dom element
+          // 2) remove the class.
+          //
+          // If no setTimeout is used, both the modifications would be done
+          // at the same time by the browser and the transition would not be triggered
+          setTimeout(function () {
+            member.classList.remove('member-hidden')  
+          })
+          
+        }, 3000)
+      }
+
+      function animateAndRemoveMemberFromLottery(index) {
+        var selectedMember = lotteryContainer.children[index]
+            selectedMember.classList.add('pulse')
+            var iterations = 0
+            selectedMember.addEventListener('animationiteration', function () {
+              if (++iterations >= 3){
+                selectedMember.remove()
+                lotteryContainer.style.marginTop = '0'
+              }
+            })
+      }
+
+      var MAX_ITERATION_NUMBER = 3
+
+      /**
+       * this function will trigger the callback just
+       * after it finishes the animation execution.
+       * The animation will stop on `stopIndex` position
+       * */
+      function animateListWindow(callback, stopIndex) {
+        var currentIteration = 0
+        var currentIndex = 0
+        var elementNumber = lotteryContainer.children.length
+        var thresold = (elementNumber - 1) * -24
+        var stopMargin = stopIndex * -24
+
+        var taskId = setInterval(function () {
+          var currentMargin = currentIndex++ * -24
+          lotteryContainer.style.marginTop = currentMargin + 'px'
+          // STOP CONDITION: when last list element is shown, stop the 
+          // animation
+          if (currentIteration === MAX_ITERATION_NUMBER && currentMargin === stopMargin) {
+            clearInterval(taskId)
+            animateAndRemoveMemberFromLottery(stopIndex)
+            callback()
+          }
+          // detect when a full scroll is done and restart from index 0
+          if (parseInt(lotteryContainer.style.marginTop) === thresold) {
+            currentIndex = 0
+            currentIteration++
+            // clearInterval(taskId)
+          }
+          console.log(lotteryContainer.style.marginTop)
+        }, 1000/12)
+
       }
 
       function assign() {
-        var randomMember = pickRandomMember()
-        assignToTeam(randomMember)
+        
+        var randomIndex = getRandomIndex(membersContainer.children.length)
+        var randomMember = membersContainer.children[randomIndex]
 
-        // if all members have been assigned (members list empty)
-        // i'll disable the assign button!
-        if (!membersContainer.children.length) {
-          var buttonContainer = document.getElementsByClassName('commands')[0]
-          buttonContainer.lastElementChild.disabled = true
-        }
+        animateListWindow(function() {
+          assignToTeam(randomMember)
+
+          // if all members have been assigned (members list empty)
+          // i'll disable the assign button!
+          if (!membersContainer.children.length) {
+            var buttonContainer = document.getElementsByClassName('commands')[0]
+            buttonContainer.lastElementChild.disabled = true
+          }
+        }, randomIndex)
       }
 
       window.onload = function() {
         input = document.getElementById('input')
         membersContainer = document.getElementById('members')
         teamsContainer = document.getElementById('teams')
+        lotteryContainer = document.getElementById('lottery')
 
         var members = [
           'fayju',
